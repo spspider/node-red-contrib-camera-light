@@ -242,12 +242,30 @@ module.exports = function(RED) {
                 
                 node.log(`Modified table: ${JSON.stringify(table)}`);
 
-                const response = await makeRequest(URL, {
+                // Пробуем сначала обычный метод
+                let response = await makeRequest(URL, {
                     method: "configManager.setConfig",
                     params: { name: "Lighting_V2", table, options: [] },
                     id: 20,
                     session: session.sessionId
                 }, session.cookies);
+                
+                // Если не сработал, пробуем system.multicall
+                if (response.status !== 200 || !response.result.result) {
+                    node.log(`Standard method failed, trying system.multicall...`);
+                    
+                    response = await makeRequest(URL, {
+                        method: "system.multicall",
+                        params: [{
+                            method: "configManager.setConfig",
+                            params: { name: "Lighting_V2", table, options: [] },
+                            id: 20,
+                            session: session.sessionId
+                        }],
+                        id: 21,
+                        session: session.sessionId
+                    }, session.cookies);
+                }
 
                 node.log(`Set config response status: ${response.status}`);
                 
