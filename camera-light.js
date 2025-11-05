@@ -201,71 +201,75 @@ module.exports = function(RED) {
             try {
                 node.log(`Setting light - Mode: ${mode}, Brightness: ${brightness}`);
                 
-                const configResponse = await makeRequest(URL, {
-                    method: "configManager.getConfig",
-                    params: { name: "Lighting_V2" },
-                    id: 10,
-                    session: session.sessionId
-                }, session.cookies);
-
-                node.log(`Get config response status: ${configResponse.status}`);
-                
-                if (configResponse.status !== 200) {
-                    node.error(`HTTP error getting config: ${configResponse.status}`);
-                    return { result: false, error: `HTTP ${configResponse.status}` };
-                }
-
-                const configData = configResponse.result;
-                node.log(`Config data: ${JSON.stringify(configData)}`);
-                
-                if (!configData.result) {
-                    if (configData.error && (configData.error.code === 287637504 || configData.error.code === 287637505)) {
-                        node.log(`Session error (${configData.error.code}): ${configData.error.message}, clearing cache and retrying...`);
-                        cachedSession = null;
-                        sessionExpiry = 0;
-                        return { result: false, error: 'Session error', retry: true };
-                    }
-                    
-                    node.error(`Failed to get config: ${JSON.stringify(configData)}`);
-                    return { result: false, error: 'Failed to get config' };
-                }
-
-                const table = configData.params.table;
-                node.log(`Original table: ${JSON.stringify(table)}`);
-                
-                table[0][0][0].Mode = mode;
-                table[0][0][0].PercentOfMaxBrightness = brightness;
-                
-                if (mode === "Manual") {
-                    table[0][0][0].MiddleLight[0].Light = brightness;
-                }
-                
-                node.log(`Modified table: ${JSON.stringify(table)}`);
-
-                // Пробуем сначала обычный метод
-                let response = await makeRequest(URL, {
-                    method: "configManager.setConfig",
-                    params: { name: "Lighting_V2", table, options: [] },
-                    id: 20,
-                    session: session.sessionId
-                }, session.cookies);
-                
-                // Если не сработал, пробуем system.multicall
-                if (response.status !== 200 || !response.result.result) {
-                    node.log(`Standard method failed, trying system.multicall...`);
-                    
-                    response = await makeRequest(URL, {
-                        method: "system.multicall",
-                        params: [{
-                            method: "configManager.setConfig",
-                            params: { name: "Lighting_V2", table, options: [] },
-                            id: 20,
-                            session: session.sessionId
-                        }],
-                        id: 21,
+                const response = await makeRequest(URL, {
+                    method: "system.multicall",
+                    params: [{
+                        method: "configManager.setConfig",
+                        params: {
+                            name: "Lighting_V2",
+                            table: [[[{
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: mode === "Off" ? 0 : 100 }],
+                                Mode: mode,
+                                PercentOfMaxBrightness: mode === "Off" ? 0 : brightness,
+                                Sensitive: 3
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Manual",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }], [{
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }], [{
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 0 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 1
+                            }, {
+                                LightType: "WhiteLight",
+                                MiddleLight: [{ Angle: 50, Light: 50 }],
+                                Mode: "Auto",
+                                PercentOfMaxBrightness: brightness,
+                                Sensitive: 3
+                            }]]],
+                            options: []
+                        },
+                        id: 480,
                         session: session.sessionId
-                    }, session.cookies);
-                }
+                    }],
+                    id: 482,
+                    session: session.sessionId
+                }, session.cookies);
 
                 node.log(`Set config response status: ${response.status}`);
                 
