@@ -202,72 +202,67 @@ module.exports = function(RED) {
                 node.log(`Setting light - Mode: ${mode}, Brightness: ${brightness}`);
                 
                 const response = await makeRequest(URL, {
-                    method: "system.multicall",
-                    params: [{
-                        method: "configManager.setConfig",
-                        params: {
-                            name: "Lighting_V2",
-                            table: [[[{
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: mode === "Off" ? 0 : 100 }],
-                                Mode: mode,
-                                PercentOfMaxBrightness: mode === "Off" ? 0 : brightness,
-                                Sensitive: 3
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Manual",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }], [{
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }], [{
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 0 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 1
-                            }, {
-                                LightType: "WhiteLight",
-                                MiddleLight: [{ Angle: 50, Light: 50 }],
-                                Mode: "Auto",
-                                PercentOfMaxBrightness: brightness,
-                                Sensitive: 3
-                            }]]],
-                            options: []
-                        },
-                        id: 480,
-                        session: session.sessionId
-                    }],
-                    id: 482,
+                    method: "configManager.setConfig",
+                    params: {
+                        name: "Lighting_V2",
+                        table: [[[{
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: mode === "Manual" ? brightness : (mode === "Off" ? 0 : 50) }],
+                            Mode: mode,
+                            PercentOfMaxBrightness: mode === "Off" ? 0 : brightness,
+                            Sensitive: 3
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Manual",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }], [{
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }], [{
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 0 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 1
+                        }, {
+                            LightType: "WhiteLight",
+                            MiddleLight: [{ Angle: 50, Light: 50 }],
+                            Mode: "Auto",
+                            PercentOfMaxBrightness: brightness,
+                            Sensitive: 3
+                        }]]],
+                        options: []
+                    },
+                    id: 421,
                     session: session.sessionId
                 }, session.cookies);
 
