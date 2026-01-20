@@ -1,0 +1,57 @@
+<script type="text/javascript">
+    RED.nodes.registerType('dahua-camera-light', {
+        category: 'camera',
+        color: '#a6bbcf',
+        defaults: {
+            name: { value: "" },
+            cameraIp: { value: "192.168.1.180" }
+        },
+        credentials: {
+            username: { type: "text" },
+            password: { type: "password" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "light.svg",
+        label: function() { return this.name || "Dahua Camera Light"; }
+    });
+</script>
+
+<script type="text/html" data-template-name="dahua-camera-light">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-cameraIp"><i class="fa fa-video-camera"></i> Camera IP</label>
+        <input type="text" id="node-input-cameraIp">
+    </div>
+    <div class="form-row">
+        <label for="node-input-username"><i class="fa fa-user"></i> Username</label>
+        <input type="text" id="node-input-username">
+    </div>
+    <div class="form-row">
+        <label for="node-input-password"><i class="fa fa-lock"></i> Password</label>
+        <input type="password" id="node-input-password">
+    </div>
+</script>
+
+<script type="text/html" data-help-name="dahua-camera-light">
+    <p>Control Dahua camera light via RPC2 protocol.</p>
+    <h3>Input Commands:</h3>
+    <ul>
+        <li><b>Number only (e.g. "50")</b> - Manual mode with specified brightness (0-100)</li>
+        <li><b>"on"</b> - Manual mode at 100% brightness</li>
+        <li><b>"off"</b> - Turn light off</li>
+        <li><b>"auto"</b> - Auto mode at 100% brightness</li>
+        <li><b>"auto 75"</b> - Auto mode with specified brightness (0-100)</li>
+    </ul>
+    <p><b>Examples:</b></p>
+    <ul>
+        <li><code>25</code> - Manual mode, 25% brightness</li>
+        <li><code>on</code> - Manual mode, 100% brightness</li>
+        <li><code>off</code> - Light off</li>
+        <li><code>auto</code> - Auto mode, 100% brightness</li>
+        <li><code>auto 60</code> - Auto mode, 60% brightness</li>
+    </ul>
+</script>
